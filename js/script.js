@@ -16,7 +16,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 });
 
 // Active Link Highlighting & Sticky Navbar
-const sections = document.querySelectorAll('section, header');
+const sections = document.querySelectorAll('section, header'); v
 const navLi = document.querySelectorAll('.nav-links li a');
 const scrollTopBtn = document.querySelector('.scroll-top');
 
@@ -47,7 +47,7 @@ window.onscroll = () => {
 
 // Typing Animation
 const typeTextSpan = document.querySelector('.typewriter');
-const textArray = ["BCA Student", "Backend Engineer (with DB expertise)", "Data Analyst"];
+const textArray = [ "Backend Engineer(with DB expertise)", "node js Developer", "Tech Enthusiast"];
 let textArrayIndex = 0;
 let charIndex = 0;
 
