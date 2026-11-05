@@ -184,8 +184,14 @@
 
     panel.appendChild(copyBtn);
   });
+  // Initialize EmailJS if library loaded
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init({
+      publicKey: 'QjQnvXj7ERKYZNchN'
+    });
+  }
 
-  // Contact form handling with realistic HTTP POST lifecycle
+  // Contact form handling with EmailJS
   const form = document.getElementById('contactForm');
   const responseBox = document.getElementById('contactResponse');
 
@@ -217,22 +223,54 @@
       }
 
       // Simulated sending state
-      const originalBtnText = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = 'POST /contact [sending...]';
+      const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
 
-      setTimeout(function () {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Sending...';
+      }
 
-        responseBox.textContent = '201 Created — Message received! Thank you, Jatin will reply shortly.';
+      if (typeof emailjs === 'undefined') {
+        responseBox.textContent = 'Email service is unavailable. Please reach out directly via email.';
+        responseBox.className = 'contact-response show error';
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+        return;
+      }
+
+      emailjs.send(
+        'service_f9lsvma',
+        'template_m1f10r9',
+        {
+          name: name,
+          from_name: name,
+          email: email,
+          from_email: email,
+          subject: ' Portfolio Contact Form Submission',
+          message: message
+        }
+      )
+      .then(function () {
+        responseBox.textContent = 'Message sent successfully! Thank you.';
         responseBox.className = 'contact-response show';
-
         form.reset();
-      }, 450);
+      })
+      .catch(function (error) {
+        console.error('EmailJS error:', error);
+        responseBox.textContent = 'Message could not be sent. Please try again.';
+        responseBox.className = 'contact-response show error';
+      })
+      .finally(function () {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      });
     });
   }
-
+   
   // Set initial rail pulse position once styles are painted
   window.addEventListener('load', function () {
     updateRailPulse(nodeMap[currentActiveId]);
